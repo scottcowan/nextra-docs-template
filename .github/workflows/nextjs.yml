@@ -77,7 +77,7 @@ jobs:
         id: init
         env:
           AWS_BUCKET_NAME: ${{vars.AWS_TERRAFORM_BUCKET}}
-        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${DOMAIN}.tfstate" -backend-config="region=${AWS_REGION}"
+        run: terraform init -backend-config="bucket=${{ vars.AWS_BUCKET_NAME }}" -backend-config="key=${{ vars.DOMAIN }}.tfstate" -backend-config="region=${{ vars.AWS_REGION}}"
       - name: Terraform Plan
         id: plan
         run: terraform plan -var='domain=${{ vars.DOMAIN }}' -var='web_acl_arn=${{ vars.WEB_ACL_ARN }}' -var='region=${{vars.AWS_REGION}}' -out tf.plan
