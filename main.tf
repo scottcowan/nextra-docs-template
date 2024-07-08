@@ -10,6 +10,11 @@ terraform {
   backend "s3" {}
 }
 
+provider "aws" {
+  alias = "virginia"
+  region = "us-east-1"
+}
+
 variable "domain" {
   description = "url to use for the tfstate file and cloudfront distribution (eg: site.acme.com)"
 }
@@ -49,6 +54,9 @@ module "bucket_upload" {
 
 module "cloudfront_distribution" {
   source = "github.com/marketing-delivery/terraform-modules//modules/cloudfront"
+  providers = {
+    aws = aws.virginia
+  }
   domain = var.domain
   bucket_id = module.site_files.id
   bucket_arn = module.site_files.bucket_arn
