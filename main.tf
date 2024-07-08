@@ -10,11 +10,6 @@ terraform {
   backend "s3" {}
 }
 
-provider "aws" {
-  alias = "virginia"
-  region = "us-east-1"
-}
-
 variable "domain" {
   description = "url to use for the tfstate file and cloudfront distribution (eg: site.acme.com)"
 }
@@ -41,22 +36,19 @@ locals {
 }
 
 module "site_files" {
-  source      = "github.com/marketing-delivery/terraform-modules//modules/s3-web-bucket"
+  source      = "github.com/marketing-delivery/terraform-modules//modules/s3-web-bucket?ref=2407.5.1"
   name        = var.domain
   tags        = local.default_tags
 }
 
 module "bucket_upload" {
-  source      = "github.com/marketing-delivery/terraform-modules//modules/s3-upload"
+  source      = "github.com/marketing-delivery/terraform-modules//modules/s3-upload?ref=2407.5.1"
   bucket_id = module.site_files.id
   source_path = var.source_path 
 }
 
 module "cloudfront_distribution" {
-  source = "github.com/marketing-delivery/terraform-modules//modules/cloudfront"
-  providers = {
-    aws = aws.virginia
-  }
+  source = "github.com/marketing-delivery/terraform-modules//modules/cloudfront?ref=2407.5.1"
   domain = var.domain
   bucket_id = module.site_files.id
   bucket_arn = module.site_files.bucket_arn
